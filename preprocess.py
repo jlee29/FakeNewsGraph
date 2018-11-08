@@ -8,7 +8,9 @@ import snap
 
 def extractDomain(rawURL):
 	parsedUrl = urlparse(rawURL)
-	return '{uri.scheme}://{uri.netloc}/'.format(uri=parsedUrl)
+	if parsedUrl.netloc.startswith('www.'):
+		return parsedUrl.netloc[4:]
+	return parsedUrl.netloc
 
 def isUninteresting(url):
 	if 'facebook' in url:
@@ -42,46 +44,46 @@ def main():
 		with open("web-2016-09-links-clean-{}.txt".format(i)) as tsvfile:
 			linkReader = csv.reader(tsvfile, delimiter='\t')
 			for row in linkReader:
-				# fromDomain = extractDomain(row[0])
-				# if isUninteresting(fromDomain):
-				# 	continue
-				# if fromDomain not in domainToNodeID:
-				# 	domainToNodeID[fromDomain] = currID
-				# 	LinkGraph.AddNode(currID)
-				# 	currID += 1
+				fromDomain = extractDomain(row[0])
+				if isUninteresting(fromDomain):
+					continue
+				if fromDomain not in domainToNodeID:
+					domainToNodeID[fromDomain] = currID
+					LinkGraph.AddNode(currID)
+					currID += 1
 
-				# uniqueToDomains = set()
+				uniqueToDomains = set()
 
-				# for link in row[2:]:
-				# 	try:
-				# 		toDomain = extractDomain(link)
-				# 		if isUninteresting(toDomain):
-				# 			continue
-				# 		if toDomain not in domainToNodeID:
-				# 			domainToNodeID[toDomain] = currID
-				# 			LinkGraph.AddNode(currID)
-				# 			currID += 1
-				# 		if toDomain not in uniqueToDomains:
-				# 			LinkGraph.AddEdge(domainToNodeID[fromDomain],domainToNodeID[toDomain])
-				# 			uniqueToDomains.add(toDomain)
-				# 	except ValueError:
-				# 		pass
-						#print("whoops")
-				if row[1][:4] != None:
-					year = row[1][:4]
-					if year not in years: 
-						years[year] = 1
-					else:
-						years[year] += 1
-					if min_date == -1: 
-						min_date = row[1]
-						max_date = row[1]
-					else:
-						if row[1] < min_date:
-							min_date = row[1]
-						elif max_date < row[1]:
-							max_date = row[1]
-					progress += 1
+				for link in row[2:]:
+					try:
+						toDomain = extractDomain(link)
+						if isUninteresting(toDomain):
+							continue
+						if toDomain not in domainToNodeID:
+							domainToNodeID[toDomain] = currID
+							LinkGraph.AddNode(currID)
+							currID += 1
+						if toDomain not in uniqueToDomains:
+							LinkGraph.AddEdge(domainToNodeID[fromDomain],domainToNodeID[toDomain])
+							uniqueToDomains.add(toDomain)
+					except ValueError:
+						pass
+						print("whoops")
+				# if row[1][:4] != None:
+				# 	year = row[1][:4]
+				# 	if year not in years: 
+				# 		years[year] = 1
+				# 	else:
+				# 		years[year] += 1
+				# 	if min_date == -1: 
+				# 		min_date = row[1]
+				# 		max_date = row[1]
+				# 	else:
+				# 		if row[1] < min_date:
+				# 			min_date = row[1]
+				# 		elif max_date < row[1]:
+				# 			max_date = row[1]
+				# 	progress += 1
 				# if row[1][:4] == "2016": 
 				# 	month = row[1][5:7]
 				# 	if month not in months: 
@@ -89,12 +91,12 @@ def main():
 				# 	else:
 				# 		months[month] += 1
 
-
-				# if progress % 10000 == 0:
-				# 	print progress
-		print min_date, max_date
-	print years
-	print months
+				progress += 1
+				if progress % 10000 == 0:
+					print progress
+	# 	print min_date, max_date
+	# print years
+	# print months
 	with open('domainToNodeID_ALL.txt', 'w') as file:
 		file.write(json.dumps(domainToNodeID))
 	snap.SaveEdgeList(LinkGraph, 'LinkGraph_ALL.txt')
