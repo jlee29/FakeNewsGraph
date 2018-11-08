@@ -33,6 +33,7 @@ def main():
 	domainToNodeID = {}
 	years = {}
 	months = {}
+	months_graph = {}
 
 	progress = 0
 
@@ -42,46 +43,37 @@ def main():
 		with open("web-2016-09-links-clean-{}.txt".format(i)) as tsvfile:
 			linkReader = csv.reader(tsvfile, delimiter='\t')
 			for row in linkReader:
-				# fromDomain = extractDomain(row[0])
-				# if isUninteresting(fromDomain):
-				# 	continue
-				# if fromDomain not in domainToNodeID:
-				# 	domainToNodeID[fromDomain] = currID
-				# 	LinkGraph.AddNode(currID)
-				# 	currID += 1
+				if row[1][:4] == "2016": 
+					month = row[1][5:7] 
+					if month not in months_graph: 
+						months_graph[month] = snap.TNGraph.New()
+					curr_graph = months_graph[month]
 
-				# uniqueToDomains = set()
+					fromDomain = extractDomain(row[0])
+					if isUninteresting(fromDomain):
+						continue
+					if fromDomain not in domainToNodeID:
+						domainToNodeID[fromDomain] = currID
+						curr_graph.AddNode(currID)
+						currID += 1
 
-				# for link in row[2:]:
-				# 	try:
-				# 		toDomain = extractDomain(link)
-				# 		if isUninteresting(toDomain):
-				# 			continue
-				# 		if toDomain not in domainToNodeID:
-				# 			domainToNodeID[toDomain] = currID
-				# 			LinkGraph.AddNode(currID)
-				# 			currID += 1
-				# 		if toDomain not in uniqueToDomains:
-				# 			LinkGraph.AddEdge(domainToNodeID[fromDomain],domainToNodeID[toDomain])
-				# 			uniqueToDomains.add(toDomain)
-				# 	except ValueError:
-				# 		pass
-						#print("whoops")
-				if row[1][:4] != None:
-					year = row[1][:4]
-					if year not in years: 
-						years[year] = 1
-					else:
-						years[year] += 1
-					if min_date == -1: 
-						min_date = row[1]
-						max_date = row[1]
-					else:
-						if row[1] < min_date:
-							min_date = row[1]
-						elif max_date < row[1]:
-							max_date = row[1]
-					progress += 1
+					uniqueToDomains = set()
+
+					for link in row[2:]:
+						try:
+							toDomain = extractDomain(link)
+							if isUninteresting(toDomain):
+								continue
+							if toDomain not in domainToNodeID:
+								domainToNodeID[toDomain] = currID
+								curr_graph.AddNode(currID)
+								currID += 1
+							if toDomain not in uniqueToDomains:
+								curr_graph.AddEdge(domainToNodeID[fromDomain],domainToNodeID[toDomain])
+								uniqueToDomains.add(toDomain)
+						except ValueError:
+							pass
+							print("whoops")
 				# if row[1][:4] == "2016": 
 				# 	month = row[1][5:7]
 				# 	if month not in months: 
