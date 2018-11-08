@@ -31,6 +31,6 @@ def main():
 	print("Top authorities:")
 	for i in range(1,10):
 		print(nodeIDToDomain[AuthKeyV[lengthOfAuthKeys-i]])
-	
+
 if __name__ == '__main__':
 	main()

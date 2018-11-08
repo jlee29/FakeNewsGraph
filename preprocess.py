@@ -35,6 +35,7 @@ def main():
 	domainToNodeID = {}
 	years = {}
 	months = {}
+	edgeCounts = {}
 
 	progress = 0
 
@@ -66,6 +67,9 @@ def main():
 						if toDomain not in uniqueToDomains:
 							LinkGraph.AddEdge(domainToNodeID[fromDomain],domainToNodeID[toDomain])
 							uniqueToDomains.add(toDomain)
+							edgeCounts[(domainToNodeID[fromDomain],domainToNodeID[toDomain])] = 1
+						else:
+							edgeCounts[(domainToNodeID[fromDomain],domainToNodeID[toDomain])] = edgeCounts[(domainToNodeID[fromDomain],domainToNodeID[toDomain])] + 1
 					except ValueError:
 						pass
 						print("whoops")
@@ -97,8 +101,12 @@ def main():
 	# 	print min_date, max_date
 	# print years
 	# print months
+	print edgeCounts
 	with open('domainToNodeID_ALL.txt', 'w') as file:
 		file.write(json.dumps(domainToNodeID))
+	with open('edgeCounts_ALL.csv', 'w') as file:
+		for k, v in edgeCounts.iteritems():
+			file.write('{},{},{}\n'.format(k[0], k[1], v))
 	snap.SaveEdgeList(LinkGraph, 'LinkGraph_ALL.txt')
 
 if __name__ == '__main__':
