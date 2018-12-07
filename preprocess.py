@@ -23,7 +23,7 @@ def isUninteresting(url):
 		return True
 	elif 'youtube' in url:
 		return True
-	elif url == 'https://t.co/':
+	elif url == 't.co':
 		return True
 	else:
 		return False

@@ -6,31 +6,46 @@ def main():
 	nodeIDToDomain = {v: k for k, v in domainToNodeID.iteritems()}
 
 	LinkGraph = snap.LoadEdgeList(snap.PNGraph, "LinkGraph_ALL.txt", 0, 1)
+
 	print("Number of nodes: %d" % (LinkGraph.GetNodes()))
 	print("Number of edges: %d" % (LinkGraph.GetEdges()))	
 
-	NIdHubH = snap.TIntFltH()
-	NIdAuthH = snap.TIntFltH()
-	HubKeyV = snap.TIntV()
-	AuthKeyV = snap.TIntV()
+	for Node in LinkGraph.Nodes():
+		if Node.GetDeg() <= 5:
+			LinkGraph.DelNode(Node.GetId())
 
-	snap.GetHits(LinkGraph, NIdHubH, NIdAuthH)
-	NIdHubH.SortByDat()
-	NIdAuthH.SortByDat()
+	print("Number of nodes after pruning: %d" % (LinkGraph.GetNodes()))
+	print("Number of edges after pruning: %d" % (LinkGraph.GetEdges()))	
 
-	NIdHubH.GetKeyV(HubKeyV)
-	NIdAuthH.GetKeyV(AuthKeyV)
+	snap.SaveEdgeList(LinkGraph, 'LinkGraph_ALL_pruned.txt')
+	
+	# print("Number of nodes: %d" % (LinkGraph.GetNodes()))
+	# print("Number of edges: %d" % (LinkGraph.GetEdges()))	
 
-	lengthOfHubKeys = HubKeyV.Len()
-	lengthOfAuthKeys = AuthKeyV.Len()
+	# NIdHubH = snap.TIntFltH()
+	# NIdAuthH = snap.TIntFltH()
+	# HubKeyV = snap.TIntV()
+	# AuthKeyV = snap.TIntV()
 
-	print("Top hubs:")
-	for i in range(1,10):
-		print(nodeIDToDomain[HubKeyV[lengthOfHubKeys-i]])
+	# snap.GetHits(LinkGraph, NIdHubH, NIdAuthH)
+	# NIdHubH.SortByDat()
+	# NIdAuthH.SortByDat()
 
-	print("Top authorities:")
-	for i in range(1,10):
-		print(nodeIDToDomain[AuthKeyV[lengthOfAuthKeys-i]])
+	# NIdHubH.GetKeyV(HubKeyV)
+	# NIdAuthH.GetKeyV(AuthKeyV)
+
+	# lengthOfHubKeys = HubKeyV.Len()
+	# lengthOfAuthKeys = AuthKeyV.Len()
+
+	# print("Top hubs:")
+	# for i in range(1,10):
+	# 	print(nodeIDToDomain[HubKeyV[lengthOfHubKeys-i]])
+
+	# print("Top authorities:")
+	# for i in range(1,10):
+	# 	print(nodeIDToDomain[AuthKeyV[lengthOfAuthKeys-i]])	
+
+
 
 if __name__ == '__main__':
 	main()
