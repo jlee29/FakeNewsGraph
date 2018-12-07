@@ -10,15 +10,19 @@ def main():
 	print("Number of nodes: %d" % (LinkGraph.GetNodes()))
 	print("Number of edges: %d" % (LinkGraph.GetEdges()))	
 
+	nodesToPrune = list()
 	for Node in LinkGraph.Nodes():
 		if Node.GetDeg() <= 5:
-			LinkGraph.DelNode(Node.GetId())
+			nodesToPrune.append(Node.GetId())
+
+	for nodeToPrune in nodesToPrune:
+		LinkGraph.DelNode(nodeToPrune)
 
 	print("Number of nodes after pruning: %d" % (LinkGraph.GetNodes()))
 	print("Number of edges after pruning: %d" % (LinkGraph.GetEdges()))	
 
 	snap.SaveEdgeList(LinkGraph, 'LinkGraph_ALL_pruned.txt')
-	
+
 	# print("Number of nodes: %d" % (LinkGraph.GetNodes()))
 	# print("Number of edges: %d" % (LinkGraph.GetEdges()))	
 
