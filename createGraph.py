@@ -12,7 +12,7 @@ def main():
 
 	nodesToPrune = list()
 	for Node in LinkGraph.Nodes():
-		if Node.GetDeg() <= 5:
+		if Node.GetInDeg() <= 5:
 			nodesToPrune.append(Node.GetId())
 
 	for nodeToPrune in nodesToPrune:
